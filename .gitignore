@@ -7,3 +7,5 @@ terraform.tfstate
 terraform.tfstate.backup
 #lock files where showing up from this directory so hiding them from git
 .terraform/
+# pycharm file
+.idea

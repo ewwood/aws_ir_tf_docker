@@ -1,28 +1,12 @@
 #Storing just resources in main.tf
 
-resource "aws_security_group" "docker-terraformed-sg" {
-  name        = "docker-terraformed_sg"
+resource "aws_security_group" "aws_ir_docker-sg" {
+  name        = "aws_ir_docker_sg"
 
-  # SSH access from anywhere
+  # SSH access from anywhere (change this to your /32 once established)
   ingress {
     from_port   = 22
     to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # HTTP access from anywhere
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # HTTPS access from anywhere
-  ingress {
-    from_port   = 443
-    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -36,16 +20,16 @@ resource "aws_security_group" "docker-terraformed-sg" {
   }
 }
 
-resource "aws_instance" "docker-terraformed" {
-  ami           = "ami-05f27d4d6770a43d2" # This ami is for Debian 9.10, you could also use ami-c58c1dd3 is the free Amazon Linux AMI but I believe its based on RHEL so remote-exec commands may fail
+resource "aws_instance" "aws_ir_docker" {
+  ami           = "ami-0d8dc90079e445007" # This ami is for Debian 9.10, you could also use ami-c58c1dd3 is the free Amazon Linux AMI but I believe its based on RHEL so remote-exec commands may fail
   instance_type = "t2.micro"
-  key_name        = "${var.key_name}"
-  vpc_security_group_ids = ["${aws_security_group.docker-terraformed-sg.id}"]
+  key_name        = var.key_name
+  vpc_security_group_ids = [aws_security_group.aws_ir_docker-sg.id]
 
   connection {
     host        = self.public_ip #did not see this in documentation but found solution here: https://github.com/hashicorp/terraform/issues/20816
     user        = "admin" #ec2-user is the default user for aws and admin is default for debian
-    private_key = "${file(var.private_key_path)}"
+    private_key = file(var.private_key_path)
   }
 
   # docker installer file to aws instance
@@ -56,7 +40,7 @@ resource "aws_instance" "docker-terraformed" {
   provisioner "remote-exec" {
     inline = [
 
-      #Install Docker and Docker Compose
+      #Install Docker and pull aws_ir_docker image.
       "sudo chmod 700 install_docker.sh",
       "./install_docker.sh"
 

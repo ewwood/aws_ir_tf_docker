@@ -4,17 +4,17 @@ variable "aws_region" {
 variable "aws_access_key_id" {}
 variable "aws_secret_access_key" {}
 variable "aws_zones" {
- type        = "list"
+ type        = list(string)
  description = "List of availability zones to use"
  default     = ["us-east-1c", "us-east-1d", "us-east-1e"]
 }
 
 variable "private_key_path" {
-    default = "ec2keys.pem"
+    default = "ir-keys.pem"
 }
 
 #must have key name if you want to be able to connect to instance
 #also looks like the key has to be created in AWS first (Network & Security -> Key Pairs)
 variable "key_name" {  
-  default = "ec2keys"
+  default = "ir-keys"
 }

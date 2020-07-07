@@ -1,8 +1,12 @@
 #!/bin/bash
 #dont forget 'chmod 700 install_docker.sh'
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker admin #optional, defualt user for aws debian image is admin
+touch start
+yum update
+yum install -y docker
+usermod -aG docker ec2-user #optional, defualt user for aws debian image is admin
+yum update
+service docker start
 
 #pull and run container from docker hub.
-sudo docker run -tid --name=ir ewwood/aws_ir_docker
+docker run -tid --name=ir ewwood/aws_ir_docker
+touch stop
